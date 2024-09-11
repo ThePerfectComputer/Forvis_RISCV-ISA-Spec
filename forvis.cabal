@@ -1,0 +1,81 @@
+-- forvis.cabal
+name:                forvis
+version:             0.1.0.0
+-- License can be specified here if desired
+author:              Rishiyur S. Nikhil, Niraj Nayan Sharma
+maintainer:          nikhil@bluespec.com
+copyright:           2018-2019 Bluespec, Inc.
+
+build-type:          Simple
+cabal-version:       >=1.10
+
+-- Define the float flag for optional floating-point support
+flag float
+  description:       Include support for floating-point extensions (F and D)
+  default:           False
+  manual:            True
+
+executable forvis_exe
+  main-is:           Main.hs
+  build-depends:
+    base >=4.12 && <5,
+    containers,
+    bytestring,
+    -- data-elf,
+    elf,
+    directory,
+    process,
+    filepath
+
+  -- Include directories for your source files
+  hs-source-dirs:    src
+
+  -- GHC options to optimize for speed
+  ghc-options:       -dynamic -threaded -rtsopts -O2 -cpp
+
+  -- Specify the other modules in your project
+  other-modules:
+    ALU,
+    Arch_Defs,
+    Address_Map
+    Bit_Utils
+    Elf
+    Forvis_Spec_Execute
+    Forvis_Spec_I64
+    Forvis_Spec_Instr_Fetch
+    Forvis_Spec_Interrupts
+    Forvis_Spec_Priv
+    Main_Run_Program
+    Main_Tandem_Verifier
+    Main_Test_Virtual_Mem
+    Mem_Ops
+    Read_Hex_File
+    UART
+    Machine_State,
+    CSR_File,
+    FPR_File,
+    GPR_File,
+    MMIO,
+    Memory,
+    Virtual_Mem,
+    Forvis_Spec_I,
+    Forvis_Spec_A,
+    Forvis_Spec_C,
+    Forvis_Spec_M,
+    Forvis_Spec_F,
+    Forvis_Spec_D,
+    Forvis_Spec_Common,
+    Forvis_Spec_Zicsr,
+    Forvis_Spec_Zifencei,
+    Run_Program_Sequential
+
+  -- Define conditional options for floating-point support
+  if flag(float)
+    cpp-options: -DFLOAT
+    build-depends: softfloat-hs, base >=4.12 && <5
+    c-sources: submodules/softfloat-hs/csrc/softfloat_wrappers.c
+    extra-lib-dirs: /usr/local/lib
+    include-dirs: submodules/softfloat-hs/include
+    includes: softfloat.h
+
+  default-language: Haskell2010
